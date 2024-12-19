@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 #这个是用来画训练过程中损失的变化曲线的！！
 # 读取CSV文件
-data = pd.read_csv('train_validation.csv', header=None)
+data = pd.read_csv('./Code/train_validation.csv', header=None)
 
 # 提取数据
 epochs = data[0]

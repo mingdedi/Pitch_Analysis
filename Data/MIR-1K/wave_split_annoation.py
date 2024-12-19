@@ -73,27 +73,35 @@ def read_pv_file(file_path, time_interval=0.02):
     # Convert the pitch_values list to a numpy array and return it
     return np.array(pitch_values)
 
-# 获取./Data/MIR-1K/Data/PitchLabel/目录下所有文件名，并去除文件格式名
-pitch_label_files = [f.split('.')[0] for f in os.listdir(f"./Data/MIR-1K/Data/PitchLabel/") if os.path.isfile(os.path.join(f"./Data/MIR-1K/Data/PitchLabel/", f))]
+TrainSet_number=9600*2
+ValidationSet_number=3200*2
+TestSet_number=3200*2
+PitchLabel_Path="./Data/MIR-1K/Data/PitchLabel/"
+Wavfile_Path="./Data/MIR-1K/Data/Wavfile/"
+TrainSets_Path="./Data/MIR-1K/Train/"
+ValidationSets_Path="./Data/MIR-1K/Validation/"
+TestSets_Path="./Data/MIR-1K/Test/"
+# 获取PitchLabel_Path目录下所有文件名，并去除文件格式名
+pitch_label_files = [f.split('.')[0] for f in os.listdir(PitchLabel_Path) if os.path.isfile(os.path.join(PitchLabel_Path, f))]
+
 j=0
 #打乱顺序随机抽取文件名
 random.shuffle(pitch_label_files)
 # 使用tqdm显示进度条
 
 #训练集样本数
-TrainSet_number=9600
 progress_bar = tqdm(total=TrainSet_number,desc="生成训练集")
 for n in range(len(pitch_label_files)):
     file_name=pitch_label_files[n]
     # print(f"Split {file_name}.wav")#这个会和tqdm冲突的需要注意
-    pitch_values = read_pv_file(f'./Data/MIR-1K/Data/PitchLabel/{file_name}.pv')
-    waveform,_=librosa.load(f'./Data/MIR-1K/Data/Wavfile/{file_name}.wav',sr=None,mono=False)
+    pitch_values = read_pv_file(PitchLabel_Path+f"{file_name}.pv")
+    waveform,_=librosa.load(Wavfile_Path+f"{file_name}.wav",sr=None,mono=False)
     waveform=waveform[1]
     for i in range(0,len(waveform)-2048,1024):
         if(abs(pitch_values[int(i/320)]-pitch_values[int((1023+i)/320)])<20):
             f0=midi_to_frequency(pitch_values[int(i/320):int((1023+i)/320)+1].mean())
             if(f0>=80):
-                filename = f"./Data/MIR-1K/Train/MIR_1K_{j}_{int(f0)}Hz.wav"
+                filename = TrainSets_Path+f"MIR_1K_{j}_{int(f0)}Hz.wav"
                 sf.write(filename, waveform[i:i+1023+1], samplerate=16000)
                 j+=1
                 progress_bar.update(1)
@@ -104,19 +112,18 @@ for n in range(len(pitch_label_files)):
 
 j=0
 #验证集样本数
-ValidationSet_number=3200
 progress_bar = tqdm(total=ValidationSet_number,desc="生成验证集")
 for n in range(n+1,len(pitch_label_files)):
     file_name=pitch_label_files[n]
     # print(f"Split {file_name}.wav")#这个会和tqdm冲突的需要注意
-    pitch_values = read_pv_file(f'./Data/MIR-1K/Data/PitchLabel/{file_name}.pv')
-    waveform,_=librosa.load(f'./Data/MIR-1K/Data/Wavfile/{file_name}.wav',sr=None,mono=False)
+    pitch_values = read_pv_file(PitchLabel_Path+f"{file_name}.pv")
+    waveform,_=librosa.load(Wavfile_Path+f"{file_name}.wav",sr=None,mono=False)
     waveform=waveform[1]
     for i in range(0,len(waveform)-2048,1024):
         if(abs(pitch_values[int(i/320)]-pitch_values[int((1023+i)/320)])<20):
             f0=midi_to_frequency(pitch_values[int(i/320):int((1023+i)/320)+1].mean())
             if(f0>=80):
-                filename = f"./Data/MIR-1K/Validation/MIR_1K_{j}_{int(f0)}Hz.wav"
+                filename = ValidationSets_Path+f"MIR_1K_{j}_{int(f0)}Hz.wav"
                 sf.write(filename, waveform[i:i+1023+1], samplerate=16000)
                 j+=1
                 progress_bar.update(1)
@@ -127,19 +134,18 @@ for n in range(n+1,len(pitch_label_files)):
 
 j=0
 #测试集样本数
-TestSet_number=3200
 progress_bar = tqdm(total=TestSet_number,desc="生成测试集")
 for n in range(n+1,len(pitch_label_files)):
     file_name=pitch_label_files[n]
     # print(f"Split {file_name}.wav")#这个会和tqdm冲突的需要注意
-    pitch_values = read_pv_file(f'./Data/MIR-1K/Data/PitchLabel/{file_name}.pv')
-    waveform,_=librosa.load(f'./Data/MIR-1K/Data/Wavfile/{file_name}.wav',sr=None,mono=False)
+    pitch_values = read_pv_file(PitchLabel_Path+f"{file_name}.pv")
+    waveform,_=librosa.load(Wavfile_Path+f"{file_name}.wav",sr=None,mono=False)
     waveform=waveform[1]
     for i in range(0,len(waveform)-2048,1024):
         if(abs(pitch_values[int(i/320)]-pitch_values[int((1023+i)/320)])<20):
             f0=midi_to_frequency(pitch_values[int(i/320):int((1023+i)/320)+1].mean())
             if(f0>=80):
-                filename = f"./Data/MIR-1K/Test/MIR_1K_{j}_{int(f0)}Hz.wav"
+                filename = TestSets_Path+f"MIR_1K_{j}_{int(f0)}Hz.wav"
                 sf.write(filename, waveform[i:i+1023+1], samplerate=16000)
                 j+=1
                 progress_bar.update(1)

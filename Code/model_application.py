@@ -12,19 +12,19 @@ import librosa
 
 #data_inputs,_=librosa.load(f"../Data/MIR-1K/Test/MIR_1K_196_369Hz.wav",sr=None)
 
-#data_inputs=librosa.load(f"./Test_wave/DR8_MMPM0_SA1.wav",sr=None)
-data_inputs,_=librosa.load(f"./Test_wave/Zhao_Read.wav",sr=16000)
+#data_inputs=librosa.load(f"C:\\Users\\13767\\Desktop\\Test_wave\\DR8_MMPM0_SA1.wav",sr=None)
+data_inputs,_=librosa.load(f"C:\\Users\\13767\\Desktop\\Test_wave\\Zhao_Read.wav",sr=16000)
 
 #查看文件整体波形，方便确定切片开始索引
 # plt.plot(data_inputs)
 # plt.show()
 #切片开始索引
-start_index=40882
+start_index=39000
 data_inputs=data_inputs[start_index:start_index+1024]
 data_inputs=torch.from_numpy(data_inputs).reshape(1,1,1024)
 
 model = CREPEModel()
-model.load_state_dict(torch.load('CREPE.pth'))
+model.load_state_dict(torch.load('./Code/CREPE.pth'))
 model.eval()
 
 with torch.no_grad():
