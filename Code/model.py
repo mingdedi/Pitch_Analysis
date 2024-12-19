@@ -71,10 +71,12 @@ class CREPEModel(nn.Module):
         return x
     
 if __name__ == '__main__':
+    #加载模型实例
     model = CREPEModel()
+    #模拟数据输入，注意输入数据格式
     input_tensor = torch.randn(32, 1, 1024)
-    # Pass the input tensor through the model
+    #测试模型输出
     output = model(input_tensor)
 
-    # Print the output shape
+    #打印输出形状
     print("Output shape:", output.shape)

@@ -40,8 +40,8 @@ def read_pv_file(file_path, time_interval=0.02):
 
 
 # 示例：读取 .pv 文件
-timestamps, pitch_values = read_pv_file(f'./Data/PitchLabel/amy_1_01.pv')
-waveform,_=librosa.load(f'./Data/Wavfile/abjones_2_02.wav',sr=None,mono=False)
+timestamps, pitch_values = read_pv_file(f'./Data/MIR-1K/Data/PitchLabel/amy_1_01.pv')
+waveform,_=librosa.load(f'./Data/MIR-1K/Data/Wavfile/abjones_2_02.wav',sr=None,mono=False)
 #注意这里一定要提取正确的声道，一个声道是唱歌配乐，另一个是人声
 waveform=waveform[1]
 fre_values=midi_to_frequency(pitch_values)

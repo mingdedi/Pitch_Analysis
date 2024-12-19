@@ -7,12 +7,12 @@ import random
 #抽取训练集中的文件，使用DFT进行分析，查看数据集是否正确标注
 #需要注意的是DFT分析只是看一个大概，真实基频数据以标注为准，要不为啥不用开窗傅里叶进行基频检测呢？
 # 不过貌似频域上的分析又是另一种深度学习模型了
-dirlist=os.listdir("./Train/")
+dirlist=os.listdir("./Data/MIR-1K/Train/")
 random.shuffle(dirlist)
 j=0
 
 for filename in dirlist[1:11]:
-    file_path = os.path.join("./Train/", filename)
+    file_path = os.path.join("./Data/MIR-1K/Train/", filename)
     waveform, _ = librosa.load(file_path, sr=None)
     
     Fre_waveform = np.fft.fft(waveform)

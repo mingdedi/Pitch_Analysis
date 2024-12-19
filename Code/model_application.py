@@ -15,23 +15,24 @@ import librosa
 #data_inputs=librosa.load(f"./Test_wave/DR8_MMPM0_SA1.wav",sr=None)
 data_inputs,_=librosa.load(f"./Test_wave/Zhao_Read.wav",sr=16000)
 
-#查看波形变化，方便确定切片开始索引
+#查看文件整体波形，方便确定切片开始索引
 # plt.plot(data_inputs)
 # plt.show()
+#切片开始索引
 start_index=40882
 data_inputs=data_inputs[start_index:start_index+1024]
 data_inputs=torch.from_numpy(data_inputs).reshape(1,1,1024)
 
-# Initialize model, loss function, and optimizer
 model = CREPEModel()
 model.load_state_dict(torch.load('CREPE.pth'))
 model.eval()
 
 with torch.no_grad():
     y_i=model(data_inputs)
-    #计算预测音分和真实的音分
+    #计算预测音分，打印预测基频
     c_hat=(y_i[0]*torch.arange(2000,9200,20)).sum()/y_i[0].sum()
     print(f"{start_index/16000}s到{(start_index+1024)/16000}s的基频是{2**(c_hat/1200)*10}Hz")
+    #画个图
     plt.subplot(3,1,1)
     plt.plot(data_inputs[0][0])
     plt.subplot(3,1,2)
